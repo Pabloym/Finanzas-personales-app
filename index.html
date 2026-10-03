@@ -1,113 +1,569 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Política de privacidad de Hucha</title>
+<title>Hucha · Sé cuánto puedo gastar</title>
+<meta name="description" content="Apunta tus gastos e ingresos y Hucha hace las cuentas: lo que tienes, lo que te va a salir y lo que de verdad puedes gastar. Sin conectar tu banco.">
+<meta name="theme-color" content="#064E3B">
+<link rel="icon" href="favicon.png">
+
+<!-- Tarjeta al compartir el enlace (WhatsApp, Instagram, X). og:image tiene que
+     ser una URL ABSOLUTA: si cambia el dominio, cambia aqui. -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://pabloym.github.io/Finanzas-personales-app/">
+<meta property="og:image" content="https://pabloym.github.io/Finanzas-personales-app/icon.png">
+<meta property="og:locale" content="es_ES">
+<meta property="og:title" content="Hucha · Sé cuánto puedo gastar">
+<meta property="og:description" content="Lo que tienes, lo que te va a salir y lo que de verdad puedes gastar. Sin conectar tu banco.">
+
+<!--
+  Pagina escaparate: promociona la app, no la sustituye.
+
+  Se publica en el repo de GitHub Pages (Pabloym/Finanzas-personales-app), todo
+  en la raiz y junto a los ficheros de legal/: por eso los enlaces a
+  privacidad.html y delete-account.html son relativos y aqui, en local, no abren.
+
+  Sin fuentes externas, sin analitica y sin cookies a proposito: asi no hace
+  falta banner de consentimiento y la pagina no habla con nadie mas que con el
+  servidor que la aloja. Los colores son los de constants/brand.ts y el estilo,
+  el del carrusel de marketing/instagram.
+
+  Las cifras de ejemplo son las mismas del carrusel (1.240 €, 321,99 €, 718 €):
+  si cambian alli, que cambien aqui.
+-->
 <style>
-  :root { color-scheme: light dark; --fondo: #ffffff; --texto: #1a1a1a; --suave: #666; --linea: #e2e2e2; --enlace: #2563eb; }
-  @media (prefers-color-scheme: dark) {
-    :root { --fondo: #12161c; --texto: #e8eaed; --suave: #9aa0a6; --linea: #2a2f37; --enlace: #7fb0ff; }
+  :root {
+    --forest: #064E3B; --forest-dark: #043C2E; --mint: #2DD4BF; --mint-light: #99F6E4;
+    --white: #F8FAFC; --bg: #F7F9F8; --surface: #FFFFFF; --text: #17212B; --muted: #64748B;
+    --border: #E3E9E6; --soft: #F1F5F4; --positive: #059669; --negative: #DC2626; --warning: #CA8A04;
+    --radius: 28px;
+    --wrap: 1120px;
+    color-scheme: light;
   }
-  * { box-sizing: border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   body {
-    margin: 0; padding: 3rem 1.25rem 6rem; background: var(--fondo); color: var(--texto);
-    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg); color: var(--text);
+    font: 17px/1.6 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased; overflow-x: hidden;
   }
-  main { max-width: 38rem; margin: 0 auto; }
-  h1 { font-size: 1.7rem; line-height: 1.2; margin: 0 0 .5rem; }
-  h2 { font-size: 1.05rem; margin: 2.5rem 0 .75rem; padding-top: 1.25rem; border-top: 1px solid var(--linea); }
-  h3 { font-size: .95rem; margin: 1.75rem 0 .5rem; color: var(--suave); }
-  p, li { margin: 0 0 .9rem; }
-  ul { padding-left: 1.2rem; }
-  a { color: var(--enlace); overflow-wrap: anywhere; }
-  .fecha { color: var(--suave); font-size: .9rem; margin-bottom: 2rem; }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; }
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 20px; }
+  .num-font { font-variant-numeric: tabular-nums; }
+
+  /* ---------- Cabecera ---------- */
+  header { position: absolute; inset: 0 0 auto; z-index: 10; }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; height: 76px; }
+  .brand { display: flex; align-items: center; gap: 12px; color: var(--white); text-decoration: none; font-weight: 700; font-size: 22px; letter-spacing: -.3px; }
+  .brand img { width: 40px; height: 40px; border-radius: 11px; }
+  .soon { font-size: 14px; font-weight: 600; color: var(--mint-light); border: 1.5px solid rgba(45, 212, 191, .45); border-radius: 999px; padding: 6px 14px; white-space: nowrap; }
+
+  /* ---------- Portada ---------- */
+  .hero { background: var(--forest); color: var(--white); padding: 140px 0 0; overflow: hidden; position: relative; }
+  .hero::before { /* halo menta detras del movil */
+    content: ""; position: absolute; width: 720px; height: 720px; right: -160px; top: 80px; border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(45, 212, 191, .22), transparent); pointer-events: none;
+  }
+  .hero .wrap { display: grid; grid-template-columns: 1fr 360px; gap: 48px; align-items: end; position: relative; }
+  .hero-copy { padding-bottom: 110px; }
+  h1 { font-size: clamp(40px, 5.6vw, 66px); line-height: 1.02; font-weight: 800; letter-spacing: -.035em; }
+  h1 span { display: block; }
+  h1 .mint { color: var(--mint); }
+  .hero .lead { font-size: clamp(18px, 2vw, 21px); color: var(--mint-light); max-width: 30em; margin-top: 28px; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 40px; align-items: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 26px; border-radius: 999px;
+    font-weight: 700; font-size: 16px; text-decoration: none; transition: transform .15s ease, background-color .15s ease;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn-mint { background: var(--mint); color: var(--forest-dark); }
+  .btn-mint:hover { background: var(--mint-light); }
+  .btn-ghost { color: var(--white); border: 1.5px solid rgba(248, 250, 252, .3); }
+  .btn-ghost:hover { background: rgba(248, 250, 252, .08); }
+  .btn svg { width: 20px; height: 20px; flex: none; }
+  .note { font-size: 14px; color: rgba(153, 246, 228, .75); margin-top: 16px; }
+
+  /* ---------- Movil (maqueta de la pantalla Inicio) ---------- */
+  .phone {
+    width: 340px; margin: 0 auto; background: #0B1512; border-radius: 52px 52px 0 0; padding: 14px 14px 0;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, .35), inset 0 0 0 2px rgba(255, 255, 255, .06);
+  }
+  .screen { background: var(--bg); border-radius: 40px 40px 0 0; padding: 18px 20px 28px; color: var(--text); min-height: 560px; }
+  .statusbar { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--muted); padding: 0 6px 18px; }
+  .s-label { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .s-big { font-size: 40px; font-weight: 800; letter-spacing: -1.5px; line-height: 1.1; }
+  .s-free { background: var(--forest); color: var(--white); border-radius: 22px; padding: 18px 20px; margin-top: 18px; }
+  .s-free .s-label { color: var(--mint-light); }
+  .s-free .s-big { color: var(--mint); font-size: 36px; }
+  .s-free small { display: block; font-size: 12px; color: var(--mint-light); opacity: .8; margin-top: 4px; line-height: 1.4; }
+  .s-forecast { display: flex; gap: 10px; margin-top: 14px; }
+  .s-forecast > div { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 12px 14px; }
+  .s-forecast b { display: block; font-size: 19px; letter-spacing: -.5px; }
+  .s-title { font-size: 14px; font-weight: 700; margin: 20px 0 6px; }
+  .s-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; font-size: 14px; }
+  .s-row + .s-row { border-top: 1px solid var(--border); }
+  .s-ico { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; font-size: 16px; flex: none; background: var(--soft); }
+  .s-row .grow { flex: 1; line-height: 1.3; }
+  .s-row .grow small { display: block; color: var(--muted); font-size: 12px; }
+  .s-row b { font-weight: 700; }
+  .pos { color: var(--positive); }
+  .neg { color: var(--negative); }
+
+  /* ---------- Secciones ---------- */
+  section.block { padding: 120px 0; }
+  .eyebrow { display: inline-block; font-size: 14px; font-weight: 700; color: var(--forest); background: var(--mint-light); padding: 5px 14px; border-radius: 999px; margin-bottom: 22px; }
+  h2 { font-size: clamp(32px, 4.4vw, 52px); line-height: 1.08; font-weight: 800; letter-spacing: -.03em; }
+  .lead { font-size: 19px; color: var(--muted); margin-top: 20px; max-width: 32em; }
+  .center { text-align: center; }
+  .center .lead { margin-left: auto; margin-right: auto; }
+
+  .feature { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+  .feature + .feature { margin-top: 140px; }
+  .feature.flip .visual { order: -1; }
+  .feature .closing { font-weight: 700; margin-top: 22px; font-size: 18px; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 30px; box-shadow: 0 1px 2px rgba(6, 78, 59, .04), 0 20px 50px -24px rgba(6, 78, 59, .18); }
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 0; font-size: 18px; }
+  .row + .row { border-top: 1px solid var(--border); }
+  .row small { display: block; color: var(--muted); font-size: 14px; }
+  .row b { font-variant-numeric: tabular-nums; }
+  .row.total { font-weight: 800; }
+
+  .compare { display: grid; gap: 18px; }
+  .compare .card { padding: 28px 32px; }
+  .compare .big { font-size: clamp(48px, 6vw, 72px); font-weight: 800; letter-spacing: -.04em; line-height: 1; margin-top: 8px; font-variant-numeric: tabular-nums; }
+  .compare .label { color: var(--muted); font-weight: 600; font-size: 15px; }
+  .compare .arrow { text-align: center; color: var(--muted); font-size: 28px; line-height: 1; }
+  .compare .later { background: var(--forest); border-color: var(--forest); color: var(--white); }
+  .compare .later .label { color: var(--mint-light); }
+  .compare .later .big { color: var(--mint); }
+
+  .free-box { background: var(--forest); color: var(--white); border-radius: var(--radius); padding: 28px 32px; margin-top: 16px; }
+  .free-box .label { color: var(--mint-light); font-weight: 600; }
+  .free-box .big { font-size: clamp(56px, 7vw, 84px); font-weight: 800; letter-spacing: -.04em; line-height: 1; color: var(--mint); margin-top: 6px; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Tres toques ---------- */
+  .steps-band { background: var(--surface); border-block: 1px solid var(--border); }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 64px; counter-reset: step; }
+  .step { border: 1px solid var(--border); border-radius: var(--radius); padding: 30px; background: var(--bg); }
+  .step::before {
+    counter-increment: step; content: counter(step);
+    display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px;
+    background: var(--forest); color: var(--mint); font-weight: 800; font-size: 20px; margin-bottom: 22px;
+  }
+  .step h3 { font-size: 21px; letter-spacing: -.3px; }
+  .step p { color: var(--muted); margin-top: 6px; }
+  .step .demo { margin-top: 22px; font-size: 36px; font-weight: 800; letter-spacing: -1px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .chip { font-size: 14px; font-weight: 600; padding: 7px 13px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); }
+  .chip.on { background: var(--forest); color: var(--white); border-color: var(--forest); }
+  .save { display: inline-block; margin-top: 22px; background: var(--mint); color: var(--forest-dark); font-weight: 700; border-radius: 999px; padding: 11px 28px; }
+
+  /* ---------- Confianza ---------- */
+  .trust { display: grid; grid-template-columns: repeat(4, 1fr); gap: 36px; margin-top: 64px; }
+  .trust .ico { width: 52px; height: 52px; border-radius: 16px; background: var(--mint-light); color: var(--forest); display: grid; place-items: center; margin-bottom: 18px; }
+  .trust .ico svg { width: 26px; height: 26px; }
+  .trust h3 { font-size: 19px; letter-spacing: -.2px; }
+  .trust p { color: var(--muted); margin-top: 6px; font-size: 16px; }
+
+  /* ---------- Pareja ---------- */
+  .couple { background: var(--forest); color: var(--white); border-radius: 40px; padding: 72px; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+  .couple .eyebrow { background: rgba(45, 212, 191, .18); color: var(--mint-light); }
+  .couple .lead { color: var(--mint-light); }
+  .split { background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .1); border-radius: var(--radius); padding: 12px 28px; }
+  .split .row { font-size: 17px; }
+  .split .row + .row { border-color: rgba(255, 255, 255, .1); }
+  .split small { color: var(--mint-light); opacity: .75; }
+  .split .owes { color: var(--mint); }
+
+  /* ---------- Planes ---------- */
+  .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 64px; max-width: 880px; margin-inline: auto; }
+  .plan { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px; }
+  .plan.premium { border: 2px solid var(--forest); position: relative; }
+  .plan h3 { font-size: 24px; letter-spacing: -.4px; }
+  .plan .price { color: var(--muted); margin-top: 4px; }
+  .plan ul { list-style: none; margin-top: 26px; display: grid; gap: 12px; }
+  .plan li { display: flex; gap: 12px; align-items: flex-start; }
+  .plan li::before { content: ""; flex: none; width: 20px; height: 20px; margin-top: 3px; border-radius: 50%; background: var(--mint-light) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.5l2.5 2.5L14 7.5' fill='none' stroke='%23064E3B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/100% no-repeat; }
+  .plan .badge { position: absolute; top: -14px; left: 36px; background: var(--forest); color: var(--mint); font-size: 13px; font-weight: 700; padding: 5px 13px; border-radius: 999px; }
+  .plan .extra { color: var(--muted); font-size: 15px; margin-top: 24px; }
+
+  /* ---------- Preguntas ---------- */
+  .faq { max-width: 760px; margin: 56px auto 0; }
+  details { border-bottom: 1px solid var(--border); }
+  summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 20px; padding: 24px 0; font-weight: 700; font-size: 19px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font-size: 26px; line-height: 1; color: var(--forest); transition: transform .2s ease; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { color: var(--muted); padding: 0 40px 24px 0; }
+
+  /* ---------- Cierre y pie ---------- */
+  .final { background: var(--forest); color: var(--white); text-align: center; padding: 120px 0; }
+  .final img { width: 96px; height: 96px; border-radius: 26px; margin: 0 auto 32px; }
+  .final h2 span { display: block; }
+  .final h2 .mint { color: var(--mint); }
+  .final .lead { color: var(--mint-light); margin-inline: auto; }
+  .final .cta-row { justify-content: center; }
+  footer { background: var(--forest-dark); color: rgba(248, 250, 252, .7); font-size: 15px; padding: 40px 0; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 16px 32px; justify-content: space-between; align-items: center; }
+  footer nav { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+  footer a { text-decoration: none; }
+  footer a:hover { color: var(--mint); }
+
+  /* ---------- Movimiento ---------- */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s cubic-bezier(.2, .7, .2, 1); }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+  a:focus-visible, summary:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; border-radius: 8px; }
+
+  /* ---------- Movil y tablet ---------- */
+  @media (max-width: 920px) {
+    .hero { padding-top: 112px; }
+    .hero .wrap, .feature, .couple { grid-template-columns: 1fr; }
+    .hero-copy { padding-bottom: 56px; }
+    .feature { gap: 40px; }
+    .feature.flip .visual { order: 0; }
+    .feature + .feature { margin-top: 96px; }
+    .steps, .plans { grid-template-columns: 1fr; }
+    .trust { grid-template-columns: 1fr 1fr; }
+    .couple { padding: 44px 28px; border-radius: 32px; }
+    section.block { padding: 88px 0; }
+  }
+  @media (max-width: 560px) {
+    body { font-size: 16px; }
+    .wrap { padding: 0 16px; }
+    .soon { display: none; }
+    .phone { width: 300px; }
+    .screen { min-height: 500px; padding: 16px 16px 24px; }
+    .trust { grid-template-columns: 1fr; gap: 28px; }
+    .card { padding: 6px 20px; }
+    .row { font-size: 16px; padding: 15px 0; }
+    .compare .card, .free-box { padding: 22px 22px; }
+    .plan { padding: 28px 24px; }
+    .btn { width: 100%; justify-content: center; }
+  }
 </style>
 </head>
 <body>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="#" aria-label="Hucha, inicio"><img src="icon.png" alt="" width="40" height="40">Hucha</a>
+    <span class="soon">Pronto en Google Play</span>
+  </div>
+</header>
+
 <main>
-<h1>Política de privacidad de Hucha</h1>
-<p class="fecha">Última actualización: 15 de septiembre de 2026</p>
-<h2>1. QUIÉN ES RESPONSABLE DE TUS DATOS</h2>
-<p>Responsable: Pablo Yañez Martin Correo de contacto: hola.app.finanzas.personales@gmail.com</p>
-<p>Hucha es una aplicación de finanzas personales para móvil. Esta política explica qué datos trata la aplicación, cuáles salen del teléfono y cuáles no.</p>
-<h2>2. LA IDEA, EN UNA FRASE</h2>
-<p>Tus datos financieros no salen de tu teléfono, salvo que tú lo pidas.</p>
-<p>Todo lo que registras en Hucha —importes, categorías, notas, fechas, presupuestos y objetivos de ahorro— se guarda en la memoria de tu dispositivo. Por defecto no hay cuenta de usuario, no se envía nada a ningún servidor y nadie más puede consultarlo. Ni siquiera nosotros.</p>
-<p>Hay dos excepciones, y las dos las activas tú:</p>
-<ul><li>La copia de seguridad en Google Drive sube tu fichero de copia a TU cuenta de Drive (apartado 4.3).</li><li>Los gastos en pareja crean una cuenta de usuario y sincronizan con un servidor los gastos que marques como DEL HOGAR, para que tu pareja los vea (apartado 4.5).</li></ul>
-<p>Mientras no actives ninguna de las dos, Hucha sigue funcionando entera sin conexión y sin cuenta. Y aunque actives los gastos en pareja, lo que no marques como del hogar no sale del teléfono.</p>
-<h2>3. QUÉ GUARDA LA APLICACIÓN Y DÓNDE</h2>
-<p>Hucha almacena en una base de datos local, dentro de tu propio dispositivo:</p>
-<ul><li>Los gastos e ingresos que registras: importe, categoría, fecha y nota.</li><li>Los movimientos programados y sus ocurrencias pendientes de confirmar.</li><li>Tus categorías, presupuestos y objetivos de ahorro.</li><li>Tus preferencias: moneda, tema claro u oscuro y ajustes de avisos.</li><li>El nombre y el correo que escribas, opcionalmente, en la pantalla de perfil.</li></ul>
-<p>Estos datos se borran por completo cuando desinstalas la aplicación o borras sus datos desde los ajustes del sistema. Solo salen del dispositivo en los casos del apartado 4: si activas la copia en Google Drive, una copia de todo ello queda además en tu cuenta de Drive; si activas los gastos en pareja, lo que marques como del hogar se sincroniza con el servidor.</p>
-<p>Las copias de seguridad y las exportaciones a CSV las generas tú y se guardan donde tú decidas. Si las compartes con otra aplicación o servicio, pasan a estar sujetas a la política de privacidad de ese destino.</p>
-<h2>4. QUÉ SALE DEL TELÉFONO Y POR QUÉ</h2>
-<p>Los dos primeros apartados no incluyen tus importes ni tus movimientos y ocurren sin que tengas que hacer nada. Los cuatro últimos solo ocurren si tú los activas.</p>
-<h3>4.1. Publicidad</h3>
-<p>La versión gratuita de Hucha muestra anuncios servidos por Google AdMob. Para mostrarlos, el SDK de Google recibe datos técnicos del dispositivo, que habitualmente incluyen:</p>
-<ul><li>El identificador de publicidad del dispositivo.</li><li>La dirección IP, de la que se deduce una ubicación aproximada.</li><li>Información del dispositivo y de la versión de la aplicación.</li></ul>
-<p>Google trata esos datos como responsable independiente. Puedes consultar cómo los utiliza en: <a href="https://policies.google.com/technologies/partner-sites">https://policies.google.com/technologies/partner-sites</a></p>
-<p>Hucha NO envía a Google, ni a ningún otro tercero, tus movimientos, importes, categorías, notas, presupuestos ni objetivos. La publicidad no está segmentada en función de tus finanzas.</p>
-<p>Si adquieres la versión de pago, no se muestran anuncios y el SDK de publicidad no llega a solicitarlos.</p>
-<h3>4.2. Actualizaciones de la aplicación</h3>
-<p>Hucha consulta el servicio de actualizaciones de Expo (<a href="https://u.expo.dev">https://u.expo.dev</a>) para comprobar si existe una versión más reciente. En esa consulta se envía información técnica de la aplicación, como su versión y la plataforma. No se envía ningún dato tuyo.</p>
-<h3>4.3. Copia de seguridad en Google Drive (opcional)</h3>
-<p>Solo si tú lo activas desde Cuenta -&gt; Copia de seguridad. Mientras no lo hagas, la aplicación no se conecta con Google Drive ni te pide ninguna cuenta.</p>
-<p>Cuando lo activas:</p>
-<ul><li>Se te pide autorizar la aplicación con tu cuenta de Google. Hucha recibe un permiso limitado (drive.file) que le deja ver y modificar ÚNICAMENTE los ficheros que ella misma crea. No puede leer el resto de tu Drive.</li><li>Se sube a tu Drive, dentro de una carpeta llamada &quot;Hucha&quot;, el mismo fichero de copia que puedes generar a mano. Ese fichero SÍ contiene tus movimientos, importes, categorías, notas, presupuestos y objetivos, y no está cifrado.</li><li>Si dejas activada la copia automática, se repite una vez por semana al abrir la aplicación. Se conservan las cinco copias más recientes y las anteriores se borran de esa carpeta.</li><li>También se guarda el correo de la cuenta conectada, para poder mostrarte cuál es.</li></ul>
-<p>Los ficheros quedan en tu Google Drive y se rigen por la política de privacidad de Google. Nosotros no tenemos acceso a ellos en ningún momento.</p>
-<p>Puedes desconectar la cuenta cuando quieras desde la misma pantalla: se retira el permiso en Google y se borra del teléfono la autorización guardada. Las copias que ya estén en tu Drive no se borran solas; puedes eliminarlas tú desde Drive.</p>
-<h3>4.4. Cuando nos escribes</h3>
-<p>Si usas la pantalla &quot;Enviar comentarios&quot;, la aplicación prepara un correo electrónico en tu gestor de correo habitual. No se envía nada hasta que tú pulsas enviar, y puedes editar o borrar el contenido antes de hacerlo.</p>
-<p>Si el mensaje es un aviso de fallo, la aplicación propone adjuntar datos técnicos: modelo de dispositivo, versión del sistema, versión de la aplicación y el NÚMERO de movimientos registrados. Nunca se adjuntan importes, categorías, notas ni fechas de tus movimientos.</p>
-<h3>4.5. Cuenta de usuario y gastos en pareja (opcional)</h3>
-<p>Solo si tú lo activas desde Cuenta -&gt; Gastos en pareja. Mientras no lo hagas, Hucha no crea ninguna cuenta ni se conecta con ningún servidor nuestro.</p>
-<p>Para crear la cuenta te pedimos tu CORREO ELECTRÓNICO y te enviamos un código de seis dígitos. No usamos contraseña. La sesión se guarda en el almacén seguro del sistema (Keychain en iOS, Keystore en Android).</p>
-<p>Qué se sincroniza con el servidor:</p>
-<ul><li>Los movimientos que marques como DEL HOGAR: importe, tipo, categoría, fecha, nota, el reparto aplicado y quién los apuntó.</li><li>Las categorías, series programadas, presupuestos y objetivos del espacio compartido.</li><li>Los datos del propio espacio: su nombre, el nombre que cada miembro elija mostrar y el porcentaje de reparto de cada uno.</li><li>Los códigos de invitación y el correo de la persona a la que invitas, que solo se usa para comprobar que quien canjea el código es ella. No se le envía ningún mensaje.</li><li>Si activas los avisos, el identificador de notificaciones de tu dispositivo y tus preferencias de aviso.</li><li>Si tienes Premium, si está activo y hasta cuándo. Basta con que uno de los dos pague, y el servidor necesita saberlo para permitir compartir. Lo obtiene de RevenueCat (apartado 4.6), nunca de tus datos de pago.</li></ul>
-<p>Qué NO se sincroniza NUNCA: todo lo que no lleve la marca del hogar. Tus gastos personales, tus categorías personales, tus presupuestos y objetivos personales y tus preferencias de la aplicación se quedan en el teléfono. No es una opción de configuración, es cómo está construida la sincronización: una fila sin espacio compartido no se envía.</p>
-<p>La otra persona del espacio VE todo lo que marques como del hogar, incluidas las notas. Es el propósito de la función, pero conviene tenerlo presente antes de marcar un gasto como común.</p>
-<p>El servidor lo proporciona Supabase (Supabase, Inc.), que actúa como encargado del tratamiento por cuenta nuestra. Los datos se alojan en la Unión Europea (Irlanda). Cada fila está protegida por reglas de acceso en el propio servidor: aunque alguien se saltase la aplicación, solo podría leer los espacios de los que es miembro.</p>
-<p>Puedes deshacer el espacio compartido en cualquier momento desde la misma pantalla. Para eliminar además tu cuenta y lo que quede en el servidor, pulsa Borrar mi cuenta en Cuenta -&gt; Gestionar mi cuenta, o escríbenos (apartado 10).</p>
-<h3>4.6. Compras y suscripciones (opcional)</h3>
-<p>Solo si compras Hucha Premium. El cobro lo hace la tienda (Google Play o App Store) con tu cuenta de la tienda: Hucha nunca ve tu tarjeta ni tus datos de pago.</p>
-<p>Para saber qué has comprado y mantener tu Premium al día usamos RevenueCat (RevenueCat, Inc.), que actúa como encargado del tratamiento. RevenueCat recibe del teléfono y de la tienda:</p>
-<ul><li>Un identificador de comprador. Si no tienes cuenta de Hucha es aleatorio; si la tienes, es el identificador interno de tu cuenta (no tu correo).</li><li>Lo que has comprado, cuándo, si la suscripción sigue activa y el recibo de la tienda.</li><li>Datos técnicos del dispositivo y de la versión de la aplicación.</li></ul>
-<p>RevenueCat NO recibe tus movimientos, importes, categorías, notas, presupuestos ni objetivos.</p>
-<p>Borrar tu cuenta de Hucha borra también tu registro en RevenueCat, pero NO cancela la suscripción: eso se hace en la tienda (en Google Play, Suscripciones).</p>
-<h2>5. AVISOS Y NOTIFICACIONES</h2>
-<p>Los recordatorios de tus movimientos pendientes son notificaciones LOCALES: las programa y las muestra tu propio dispositivo, sin que intervenga ningún servidor. Es lo único que hay mientras no uses los gastos en pareja.</p>
-<p>Si usas los gastos en pareja y activas los avisos, el servidor puede enviar notificaciones push a la otra persona cuando apuntas un gasto común, cuando se cruza un límite de presupuesto del hogar y, si está activado, con un resumen diario. Para poder entregarlas se guarda el identificador de notificaciones de cada dispositivo y se utiliza el servicio de envío de Expo, que a su vez usa los de Google y Apple. Cada uno de los tres avisos tiene su propio interruptor y puedes desactivarlos por separado.</p>
-<h2>6. BASE LEGAL DEL TRATAMIENTO</h2>
-<ul><li>Datos guardados en el dispositivo: son necesarios para prestarte el servicio que has solicitado al instalar y usar la aplicación.</li><li>Cuenta de usuario y gastos en pareja: ejecución del servicio que solicitas al activarlos. Sin tratar esos datos, la función no puede existir.</li><li>Avisos push a la otra persona: tu consentimiento, que das al activar cada interruptor y puedes retirar en cualquier momento.</li><li>Publicidad personalizada: tu consentimiento, que solicitamos mediante el formulario que aparece al abrir la aplicación por primera vez.</li><li>Publicidad no personalizada: interés legítimo en sostener económicamente una aplicación gratuita. Se muestra cuando rechazas la personalización.</li><li>Correos que nos envías: tu consentimiento al pulsar enviar.</li><li>Compras y suscripciones: ejecución del contrato de compra que solicitas.</li></ul>
-<h2>7. TU CONSENTIMIENTO PARA LA PUBLICIDAD</h2>
-<p>La primera vez que abres Hucha aparece un formulario donde eliges si aceptas la publicidad personalizada.</p>
-<p>Puedes cambiar de opinión cuando quieras desde la propia aplicación, en Cuenta -&gt; Privacidad. Rechazar la personalización no desactiva los anuncios: seguirás viéndolos, pero sin que se utilicen tus datos para elegirlos.</p>
-<h2>8. DURANTE CUÁNTO TIEMPO</h2>
-<p>Los datos que registras permanecen en tu dispositivo hasta que tú los borras, ya sea eliminándolos dentro de la aplicación, borrando los datos de la aplicación o desinstalándola.</p>
-<p>Si usas los gastos en pareja, lo que se haya sincronizado permanece en el servidor mientras exista el espacio compartido. Al deshacerlo, deja de estar accesible desde la aplicación. Para eliminar tu cuenta y los datos que queden en el servidor, escríbenos: lo hacemos en el plazo máximo de un mes.</p>
-<p>Los códigos de invitación caducan solos. Los correos que nos envías se conservan mientras sean necesarios para atenderte.</p>
-<h2>9. CON QUIÉN SE COMPARTEN</h2>
-<p>Hucha no vende ni cede tus datos. Los terceros que intervienen son:</p>
-<ul><li>Google, como responsable independiente, para la publicidad y las actualizaciones (apartados 4.1 y 4.2), y como proveedor de Drive si activas la copia de seguridad (apartado 4.3).</li><li>Supabase (Supabase, Inc.), como encargado del tratamiento, para alojar el servidor de los gastos en pareja, con los datos en la Unión Europea (Irlanda).</li><li>Expo (Expo, Inc.), como encargado del tratamiento, para entregar las notificaciones push a los dispositivos.</li><li>RevenueCat (RevenueCat, Inc.), como encargado del tratamiento, para gestionar las compras de Premium (apartado 4.6).</li></ul>
-<p>Y, por supuesto, la persona a la que invites a tu espacio compartido, que ve todo lo que marques como del hogar.</p>
-<h2>10. TUS DERECHOS</h2>
-<p>Tienes derecho a acceder a tus datos, rectificarlos, suprimirlos, oponerte al tratamiento, solicitar su limitación y obtenerlos en un formato portable.</p>
-<p>En la práctica, la mayoría los ejerces tú directamente y sin pedirnos permiso, porque los datos están en tu poder:</p>
-<ul><li>Acceso y portabilidad: Cuenta -&gt; Exportar datos genera un CSV, y Cuenta -&gt; Copia de seguridad un fichero completo.</li><li>Rectificación: puedes editar cualquier movimiento desde la aplicación.</li><li>Supresión: puedes borrar movimientos, o borrar los datos de la aplicación desde los ajustes de tu sistema para eliminarlos todos.</li><li>Gastos en pareja: puedes deshacer el espacio compartido desde Cuenta -&gt; Gastos en pareja.</li></ul>
-<p>Para eliminar tu CUENTA y lo que quede en el servidor, pulsa Borrar mi cuenta en Cuenta -&gt; Gestionar mi cuenta, o escríbenos a hola.app.finanzas.personales@gmail.com desde el correo de la cuenta: lo hacemos en el plazo máximo de un mes. Los pasos, y qué se borra y qué se conserva, están en <a href="delete-account.html">delete-account.html</a>. Para cualquier otra cuestión, la misma dirección.</p>
-<p>Si consideras que no hemos atendido tus derechos correctamente, puedes presentar una reclamación ante la Agencia Española de Protección de Datos (<a href="https://www.aepd.es">https://www.aepd.es</a>).</p>
-<h2>11. MENORES</h2>
-<p>Hucha no está dirigida a menores de 14 años y no recopila conscientemente sus datos.</p>
-<h2>12. SEGURIDAD</h2>
-<p>Los datos residen en el almacenamiento privado de la aplicación, protegido por el sistema operativo frente al acceso de otras aplicaciones. Lo que no marques como del hogar no viaja por la red, así que no está expuesto a las brechas de seguridad que afectan a los servicios en la nube.</p>
-<p>Lo que sí se sincroniza viaja cifrado (HTTPS) y en el servidor está protegido por reglas de acceso por fila: solo pueden leerlo los miembros de tu espacio. Las credenciales de sesión y las autorizaciones de Google se guardan en el almacén seguro del sistema, nunca en la base de datos de la aplicación ni en los ficheros de copia de seguridad.</p>
-<p>Ten en cuenta que cualquier persona con acceso a tu teléfono desbloqueado puede abrir la aplicación y ver tus datos.</p>
-<h2>13. CAMBIOS EN ESTA POLÍTICA</h2>
-<p>Si esta política cambia, actualizaremos la fecha del encabezado. Si el cambio afecta de forma significativa al tratamiento de tus datos, te avisaremos dentro de la aplicación.</p>
-<h2>14. CONTACTO</h2>
-<p>hola.app.finanzas.personales@gmail.com</p>
+
+<!-- Portada -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-copy">
+      <h1><span>Sé cuánto tengo.</span><span>Sé qué viene.</span><span class="mint">Sé cuánto puedo gastar.</span></h1>
+      <p class="lead">Apuntas tus gastos e ingresos y Hucha hace las cuentas: lo que tienes hoy, lo que te va a salir y lo que de verdad puedes gastar. Sin conectar tu banco.</p>
+      <div class="cta-row">
+        <a class="btn btn-mint" href="https://www.instagram.com/hucha_finanzas_personales/" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          Avísame cuando salga
+        </a>
+        <a class="btn btn-ghost" href="#como-funciona">Cómo funciona</a>
+      </div>
+      <p class="note">Estamos terminándola. La anunciaremos en Instagram, @hucha_finanzas_personales.</p>
+    </div>
+
+    <div class="phone reveal" role="img" aria-label="Pantalla de inicio de Hucha: 1.240 euros disponibles, 718 euros de dinero libre y los próximos recibos.">
+      <div class="screen" aria-hidden="true">
+        <div class="statusbar"><span>9:41</span><span>Inicio</span></div>
+        <p class="s-label">Dinero disponible</p>
+        <p class="s-big num-font">1.240 €</p>
+        <div class="s-free">
+          <p class="s-label">Dinero libre</p>
+          <p class="s-big num-font"><span data-count="718">718</span> €</p>
+          <small>Lo que puedes gastar sin comprometer tus recibos ni tu ahorro.</small>
+        </div>
+        <div class="s-forecast">
+          <div><span class="s-label">Ahora</span><b class="num-font">1.240 €</b></div>
+          <div><span class="s-label">Fin de mes</span><b class="num-font">918 €</b></div>
+        </div>
+        <p class="s-title">Próximos movimientos</p>
+        <div class="s-row"><span class="s-ico">💡</span><span class="grow">Luz<small>18 oct</small></span><b class="neg num-font">−64,00 €</b></div>
+        <div class="s-row"><span class="s-ico">🏋️</span><span class="grow">Gimnasio<small>20 oct</small></span><b class="neg num-font">−30,00 €</b></div>
+        <div class="s-row"><span class="s-ico">🎬</span><span class="grow">Netflix<small>24 oct</small></span><b class="neg num-font">−17,99 €</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Las tres preguntas -->
+<section class="block" id="como-funciona">
+  <div class="wrap">
+
+    <div class="feature reveal">
+      <div>
+        <span class="eyebrow">01 · Sé qué viene</span>
+        <h2>¿Qué me va a salir antes de fin de mes?</h2>
+        <p class="lead">Apunta una vez el alquiler, la luz o el gimnasio. Hucha te los enseña antes de que lleguen y te avisa el día que toca para que confirmes si se ha cobrado.</p>
+        <p class="closing">Los recibos no avisan. Hucha sí.</p>
+      </div>
+      <div class="visual">
+        <div class="card">
+          <div class="row"><span>Luz<small>día 18</small></span><b class="neg">−64,00 €</b></div>
+          <div class="row"><span>Gimnasio<small>día 20</small></span><b class="neg">−30,00 €</b></div>
+          <div class="row"><span>Netflix<small>día 24</small></span><b class="neg">−17,99 €</b></div>
+          <div class="row"><span>Seguro del coche<small>día 28</small></span><b class="neg">−210,00 €</b></div>
+          <div class="row total"><span>Total</span><b class="neg">−321,99 €</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature flip reveal">
+      <div>
+        <span class="eyebrow">02 · Sé cuánto tengo</span>
+        <h2>¿Con cuánto llego a fin de mes?</h2>
+        <p class="lead">Tu saldo de hoy no es tu saldo del día 30. Hucha separa siempre el dinero que tienes del que vas a tener, con la nómina y los recibos que faltan.</p>
+      </div>
+      <div class="visual compare">
+        <div class="card"><p class="label">Hoy, día 12</p><p class="big">1.240 €</p></div>
+        <div class="arrow" aria-hidden="true">↓</div>
+        <div class="card later"><p class="label">Día 30, con los recibos cobrados</p><p class="big">918 €</p></div>
+      </div>
+    </div>
+
+    <div class="feature reveal">
+      <div>
+        <span class="eyebrow">03 · Sé cuánto puedo gastar</span>
+        <h2>¿Cuánto puedo gastar sin pillarme los dedos?</h2>
+        <p class="lead">El <strong>dinero libre</strong> es lo que te queda después de apartar los recibos que vienen y lo que quieres ahorrar. Es la cifra que miras antes de decir que sí a esa cena.</p>
+      </div>
+      <div class="visual">
+        <div class="card">
+          <div class="row"><span>Tienes</span><b>1.240,00 €</b></div>
+          <div class="row"><span>Recibos que vienen</span><b class="neg">−321,99 €</b></div>
+          <div class="row"><span>Tu ahorro del mes</span><b class="neg">−200,00 €</b></div>
+        </div>
+        <div class="free-box">
+          <p class="label">Dinero libre</p>
+          <p class="big"><span data-count="718">718</span> €</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Tres toques -->
+<section class="block steps-band">
+  <div class="wrap center reveal">
+    <span class="eyebrow">Apuntar un gasto</span>
+    <h2>Tres toques. Ni uno más.</h2>
+    <p class="lead">Si apuntar cuesta, no se apunta. Por eso todo lo demás es opcional.</p>
+  </div>
+  <div class="wrap">
+    <div class="steps">
+      <div class="step reveal">
+        <h3>El importe</h3>
+        <p>Teclado grande, sin rodeos.</p>
+        <p class="demo num-font">35,50 €</p>
+      </div>
+      <div class="step reveal">
+        <h3>La categoría</h3>
+        <p>Un toque.</p>
+        <div class="chips"><span class="chip">🛒 Alimentación</span><span class="chip on">🍽️ Restaurantes</span><span class="chip">⛽ Transporte</span><span class="chip">🎉 Ocio</span></div>
+      </div>
+      <div class="step reveal">
+        <h3>Guardar</h3>
+        <p>La fecha ya es hoy. La nota, si quieres.</p>
+        <span class="save">Guardar</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Confianza -->
+<section class="block">
+  <div class="wrap center reveal">
+    <span class="eyebrow">Sin letra pequeña</span>
+    <h2>No es tu banco. Y está bien así.</h2>
+  </div>
+  <div class="wrap">
+    <div class="trust">
+      <div class="reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <h3>Sin conectar tu banco</h3>
+        <p>No te pedimos claves, tarjetas ni cuentas. Apuntas lo tuyo y punto.</p>
+      </div>
+      <div class="reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></div>
+        <h3>Tus cuentas, en tu móvil</h3>
+        <p>Tus movimientos se guardan en tu teléfono. Solo sale de ahí lo que decides compartir.</p>
+      </div>
+      <div class="reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><path d="M12 20h.01"/><path d="M2 2l20 20"/></svg></div>
+        <h3>Funciona sin conexión</h3>
+        <p>En el metro o en el pueblo. Apuntas igual.</p>
+      </div>
+      <div class="reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Hecha en España</h3>
+        <p>En euros, con comas donde van las comas, y por una persona que la usa a diario.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pareja -->
+<section class="block" style="padding-top: 0">
+  <div class="wrap">
+    <div class="couple reveal">
+      <div>
+        <span class="eyebrow">Gastos en pareja</span>
+        <h2>Lo de casa, a medias. Lo tuyo, tuyo.</h2>
+        <p class="lead">Compartid solo los gastos del hogar, con el reparto que acordéis. Cada uno sigue teniendo sus cuentas aparte, y con un solo Premium entráis los dos.</p>
+      </div>
+      <div class="split">
+        <div class="row"><span>Alquiler<small>50 % · 50 %</small></span><b>−850,00 €</b></div>
+        <div class="row"><span>Compra del súper<small>apuntó Laura</small></span><b>−86,40 €</b></div>
+        <div class="row"><span>Luz<small>60 % · 40 %</small></span><b>−64,00 €</b></div>
+        <div class="row total"><span>Este mes</span><b class="owes">Estáis en paz</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Planes. Tiene que decir EXACTAMENTE lo que separa features/premium/entitlements.ts. -->
+<section class="block steps-band">
+  <div class="wrap center reveal">
+    <span class="eyebrow">Planes</span>
+    <h2>Gratis para lo esencial.</h2>
+    <p class="lead">Tus cifras nunca se quedan detrás de un pago: apuntar, el historial, las estadísticas y exportar tus datos son gratis siempre.</p>
+  </div>
+  <div class="wrap">
+    <div class="plans">
+      <div class="plan reveal">
+        <h3>Gratis</h3>
+        <p class="price">Para siempre</p>
+        <ul>
+          <li>Gastos e ingresos sin límite</li>
+          <li>Dinero disponible, dinero libre y previsión</li>
+          <li>Historial con filtros</li>
+          <li>Estadísticas por categoría y por mes</li>
+          <li>Objetivos de ahorro</li>
+          <li>Exportar tus datos</li>
+        </ul>
+      </div>
+      <div class="plan premium reveal">
+        <span class="badge">Premium</span>
+        <h3>Premium</h3>
+        <p class="price">Precio en el lanzamiento</p>
+        <ul>
+          <li>Todo lo del plan gratis, sin anuncios</li>
+          <li>Movimientos programados con aviso el día que tocan</li>
+          <li>Presupuestos, globales y por categoría</li>
+          <li>Gastos en pareja: tu pareja entra gratis</li>
+          <li>Categorías sin límite</li>
+          <li>Copia de seguridad, también automática en tu Google Drive</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Preguntas -->
+<section class="block">
+  <div class="wrap center reveal">
+    <h2>Preguntas frecuentes</h2>
+  </div>
+  <div class="wrap">
+    <div class="faq reveal">
+      <details>
+        <summary>¿Cuándo sale?</summary>
+        <p>Estamos con los últimos detalles. Saldrá primero en Google Play y lo anunciaremos en Instagram, en <a href="https://www.instagram.com/hucha_finanzas_personales/" rel="noopener">@hucha_finanzas_personales</a>.</p>
+      </details>
+      <details>
+        <summary>¿Y en iPhone?</summary>
+        <p>Empezamos por Android. Si la app funciona como esperamos, el siguiente paso es el iPhone.</p>
+      </details>
+      <details>
+        <summary>¿Tengo que conectar mi banco?</summary>
+        <p>No. Hucha no se conecta a ningún banco ni te pide tarjetas o cuentas. Apuntas tus gastos e ingresos y ella hace las cuentas.</p>
+      </details>
+      <details>
+        <summary>¿Necesito crear una cuenta?</summary>
+        <p>No para usarla. Solo hace falta si quieres compartir gastos con tu pareja.</p>
+      </details>
+      <details>
+        <summary>¿Qué pasa con mis datos?</summary>
+        <p>Tus movimientos se guardan en tu móvil. Lo que se sube y para qué está explicado, sin rodeos, en la <a href="privacidad.html">política de privacidad</a>.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- Cierre -->
+<section class="final">
+  <div class="wrap reveal">
+    <img src="icon.png" alt="" width="96" height="96">
+    <h2><span>Sé cuánto tengo. Sé qué viene.</span><span class="mint">Sé cuánto puedo gastar.</span></h2>
+    <p class="lead">Pronto en Google Play. Síguenos y te avisamos el día que salga.</p>
+    <div class="cta-row">
+      <a class="btn btn-mint" href="https://www.instagram.com/hucha_finanzas_personales/" rel="noopener">Seguir en Instagram</a>
+    </div>
+  </div>
+</section>
+
 </main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Hucha</span>
+    <nav aria-label="Información legal y contacto">
+      <a href="privacidad.html">Privacidad</a>
+      <a href="delete-account.html">Borrar mi cuenta</a>
+      <a href="mailto:hola.app.finanzas.personales@gmail.com">Contacto</a>
+      <a href="https://www.instagram.com/hucha_finanzas_personales/" rel="noopener">Instagram</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  // Sin JavaScript la pagina se ve entera: esto solo anade la entrada suave de
+  // los bloques y la cuenta del dinero libre.
+  (function () {
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var items = document.querySelectorAll('.reveal');
+    if (reduce || !('IntersectionObserver' in window)) {
+      items.forEach(function (el) { el.classList.add('in'); });
+      return;
+    }
+
+    function countUp(el) {
+      var target = Number(el.dataset.count);
+      var start = performance.now();
+      var duration = 1100;
+      function tick(now) {
+        var t = Math.min((now - start) / duration, 1);
+        var eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(target * eased).toLocaleString('es-ES');
+        if (t < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('in');
+        entry.target.querySelectorAll('[data-count]').forEach(countUp);
+        io.unobserve(entry.target);
+      });
+    }, { threshold: 0.15 });
+    items.forEach(function (el) { io.observe(el); });
+  })();
+</script>
 </body>
 </html>
